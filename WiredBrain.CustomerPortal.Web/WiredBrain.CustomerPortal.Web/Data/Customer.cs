@@ -14,6 +14,7 @@ namespace WiredBrain.CustomerPortal.Web.Data
         [StringLength(200)]
         public string Name { get; set; }
         public int Points { get; set; }
+        public int FreeCoffees { get; set; }
 
         [StringLength(400)]
         public string FavoriteDrink { get; set; }

@@ -10,16 +10,10 @@ namespace WiredBrain.CustomerPortal.Web.Data
 
         public DbSet<Customer> Customers { get; set; }
 
-        public void EnsureSchemaAndSeedData()
+        public void Seed()
         {
-            Database.EnsureCreated();
-            Seed();
-        }
-
-        private void Seed()
-        {
-            Customers.Add(new Customer { Name = "Roland", FavoriteDrink = "Latte Macchiato extra strong, no sugar, extra milk", LoyaltyNumber = 5932, Points = 831 });
-            Customers.Add(new Customer { Name = "David", FavoriteDrink = "Chai Latte straight up", LoyaltyNumber = 4832, Points = 164 });
+            Customers.Add(new Customer { Name = "Roland", FavoriteDrink = "Latte Macchiato extra strong, no sugar, extra milk", LoyaltyNumber = 5932, Points = 831, FreeCoffees = 1 });
+            Customers.Add(new Customer { Name = "David", FavoriteDrink = "Expresso", LoyaltyNumber = 4832, Points = 164, FreeCoffees = 0 });
             SaveChanges();
         }
     }

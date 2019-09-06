@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WiredBrain.CustomerPortal.Web.Data;
 using WiredBrain.CustomerPortal.Web.Repositories;
@@ -9,21 +11,30 @@ namespace WiredBrain.CustomerPortal.Web
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        private readonly IConfiguration config;
+
+        public Startup(IConfiguration config)
+        {
+            this.config = config;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
 
-            services.AddDbContext<CustomerPortalDbContext>(
-               builder =>
-                   builder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0")
-               );
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
 
+            var options = new DbContextOptionsBuilder<CustomerPortalDbContext>().UseSqlite(connection).Options;
+            var context = new CustomerPortalDbContext(options);
+            context.Database.EnsureCreated();
+            context.Seed();
+
+            services.AddSingleton(context);
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton(config);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
