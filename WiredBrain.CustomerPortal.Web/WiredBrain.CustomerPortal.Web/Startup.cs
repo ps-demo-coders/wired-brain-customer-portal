@@ -40,6 +40,14 @@ namespace WiredBrain.CustomerPortal.Web
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
 
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Response.Headers.Add("HeaderType", "HeaderValue");
+            //    await next();
+            //});
+
+            app.UseSecurityHeaders();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
