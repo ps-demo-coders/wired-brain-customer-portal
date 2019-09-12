@@ -1,16 +1,31 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace WiredBrain.CustomerPortal.Web
 {
-    public static class SecurityHeadersMiddleware
+    public static class IApplicationBuilderExtensions
     {
         public static void UseSecurityHeaders(this IApplicationBuilder app)
         {
-            app.Use(async (context, next) =>
-            {
-                context.Response.Headers.Add("HeaderType", "HeaderValue");
-                await next();
-            });
+            app.UseMiddleware<SecurityHeadersMiddleware>();
         }
+    }
+
+    public class SecurityHeadersMiddleware
+    {
+        private readonly RequestDelegate next;
+
+        public SecurityHeadersMiddleware(RequestDelegate next)
+        {
+            this.next = next;
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            context.Response.Headers.Add("HeaderType", "HeaderValue");
+            await next(context);
+        }
+
     }
 }
