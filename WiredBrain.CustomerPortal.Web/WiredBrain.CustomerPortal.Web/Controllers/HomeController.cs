@@ -45,14 +45,15 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
 
             if (Request.Cookies.ContainsKey(cookieName))
             {
-                var loyaltyInfo = JsonSerializer.Deserialize<LoyaltyModel>(Request.Cookies[cookieName]);
+                var loyaltyInfo = JsonSerializer.Deserialize<LoyaltyModel>(
+                    Request.Cookies[cookieName]);
                 return View(loyaltyInfo);
             }
             var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
             var pointsNeeded = int.Parse(config["CustomerPortalSettings:PointsNeeded"]);
 
             var loyaltyModel = LoyaltyModel.FromCustomer(customer, pointsNeeded);
-            Response.Cookies.Append("LoyaltyInfo", JsonSerializer.Serialize(loyaltyModel), 
+            Response.Cookies.Append("LoyaltyInfo", JsonSerializer.Serialize(loyaltyModel),
                 new CookieOptions { Expires = DateTimeOffset.Now.AddHours(2) });
             return View(loyaltyModel);
         }

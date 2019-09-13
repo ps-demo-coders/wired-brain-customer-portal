@@ -6,7 +6,8 @@ namespace WiredBrain.CustomerPortal.Web
 {
     public static class IApplicationBuilderExtensions
     {
-        public static void UseSecurityHeaders(this IApplicationBuilder app)
+        public static void UseSecurityHeaders(
+            this IApplicationBuilder app)
         {
             app.UseMiddleware<SecurityHeadersMiddleware>();
         }

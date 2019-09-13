@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WiredBrain.CustomerPortal.AspNetCore;
 using WiredBrain.CustomerPortal.Web.Data;
 using WiredBrain.CustomerPortal.Web.Repositories;
 
@@ -20,7 +21,10 @@ namespace WiredBrain.CustomerPortal.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(c =>
+            {
+                c.Filters.Add(new SecurityHeadersAttribute());
+            });
 
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -46,7 +50,7 @@ namespace WiredBrain.CustomerPortal.Web
             //    await next();
             //});
 
-            app.UseSecurityHeaders();
+            //app.UseSecurityHeaders();
 
             app.UseRouting();
 
