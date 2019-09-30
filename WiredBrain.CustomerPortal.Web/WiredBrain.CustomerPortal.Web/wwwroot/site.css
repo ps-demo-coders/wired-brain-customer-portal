@@ -1,0 +1,13 @@
+﻿.welcomeHeader {
+    color: green;
+    text-align: center;
+}
+
+.clickJackingImage {
+    position: fixed;
+    top: 383px;
+    left: 18px;
+    width: 100px;
+    pointer-events: none;
+}
+

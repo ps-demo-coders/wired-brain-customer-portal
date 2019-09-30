@@ -4,7 +4,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WiredBrain.CustomerPortal.AspNetCore;
 using WiredBrain.CustomerPortal.Web.Data;
 using WiredBrain.CustomerPortal.Web.Repositories;
 
@@ -21,10 +20,12 @@ namespace WiredBrain.CustomerPortal.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews(c =>
-            {
-                c.Filters.Add(new SecurityHeadersAttribute());
-            });
+            //services.AddControllersWithViews(c =>
+            //{
+            //    c.Filters.Add(new SecurityHeadersAttribute());
+            //});
+
+            services.AddControllersWithViews();
 
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
@@ -37,6 +38,7 @@ namespace WiredBrain.CustomerPortal.Web
             services.AddSingleton(context);
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddSingleton(config);
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -50,7 +52,15 @@ namespace WiredBrain.CustomerPortal.Web
             //    await next();
             //});
 
-            //app.UseSecurityHeaders();
+            app.UseSecurityHeaders();
+
+            //app.UseCsp(options => options.DefaultSources(s => s.Self())
+            //.FrameAncestors(f => f.None())
+
+            //.StyleSources(s => s.Self().CustomSources("https://stackpath.bootstrapcdn.com"))
+            //    .ReportUris(r => r.Uris("/report")));
+
+            //app.UseXContentTypeOptions();
 
             app.UseRouting();
 

@@ -24,7 +24,16 @@ namespace WiredBrain.CustomerPortal.Web
 
         public async Task Invoke(HttpContext context)
         {
-            context.Response.Headers.Add("HeaderType", "HeaderValue");
+            context.Response.Headers.Add(
+                "Content-Security-Policy", "style-src 'self' " +
+                "https://stackpath.bootstrapcdn.com;" +
+                "frame-ancestors 'none'");
+            context.Response.Headers.Add(
+                "Feature-Policy", "camera 'none'");
+            context.Response.Headers.Add(
+                "X-Content-Type-Options", "nosniff");
+            context.Response.Headers.Add(
+                "Referrer-Policy", "no-referrer");
             await next(context);
         }
 

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace WiredBrain.CustomerPortal.Web
+namespace WiredBrian.Referrer
 {
     public class Program
     {
@@ -21,7 +21,6 @@ namespace WiredBrain.CustomerPortal.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.ConfigureKestrel(o => o.AddServerHeader = false);
                 });
     }
 }

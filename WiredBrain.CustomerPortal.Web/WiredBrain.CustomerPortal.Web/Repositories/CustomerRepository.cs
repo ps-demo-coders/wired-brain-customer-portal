@@ -24,8 +24,7 @@ namespace WiredBrain.CustomerPortal.Web.Repositories
 
         public async Task SetFavorite(EditFavoriteModel model)
         {
-            var customers = dbContext.Customers.FromSqlRaw("SELECT * FROM Customers where LoyaltyNumber = " + model.LoyaltyNumber.ToString());
-            var customer = await customers.FirstOrDefaultAsync();
+            var customer = await dbContext.Customers.FirstAsync(c => c.LoyaltyNumber == model.LoyaltyNumber);
 
             customer.FavoriteDrink = model.Favorite;
             await dbContext.SaveChangesAsync();
