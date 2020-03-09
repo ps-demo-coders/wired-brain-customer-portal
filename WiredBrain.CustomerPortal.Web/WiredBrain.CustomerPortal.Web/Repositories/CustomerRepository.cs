@@ -22,12 +22,20 @@ namespace WiredBrain.CustomerPortal.Web.Repositories
             return customer;
         }
 
-        public async Task SetFavorite(EditFavoriteModel model)
+        public async Task SetProfile(ProfileModel model)
         {
             var customers = dbContext.Customers.FromSqlRaw("SELECT * FROM Customers where LoyaltyNumber = " + model.LoyaltyNumber.ToString());
             var customer = await customers.FirstOrDefaultAsync();
 
+            customer.Name = model.Name;
+            customer.Address = model.Address;
+            customer.Zip = model.Zip;
+            customer.City = model.City;
+            customer.AddLiquor = model.AddLiquor;
+            customer.BirthDate = model.BirthDate;
+            customer.EmailAddress = model.EmailAddress;
             customer.FavoriteDrink = model.Favorite;
+
             await dbContext.SaveChangesAsync();
         }
     }

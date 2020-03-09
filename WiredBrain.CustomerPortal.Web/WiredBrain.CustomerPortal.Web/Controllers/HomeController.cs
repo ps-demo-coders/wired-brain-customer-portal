@@ -52,27 +52,23 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
             var pointsNeeded = int.Parse(config["CustomerPortalSettings:PointsNeeded"]);
 
             var loyaltyModel = LoyaltyModel.FromCustomer(customer, pointsNeeded);
-            Response.Cookies.Append("LoyaltyInfo", JsonSerializer.Serialize(loyaltyModel), 
+            Response.Cookies.Append("LoyaltyInfo", JsonSerializer.Serialize(loyaltyModel),
                 new CookieOptions { Expires = DateTimeOffset.Now.AddHours(2) });
             return View(loyaltyModel);
         }
 
-        public async Task<IActionResult> EditFavorite(int loyaltyNumber)
+        public async Task<IActionResult> EditProfile(int loyaltyNumber)
         {
             ViewBag.Title = "Edit favorite";
 
             var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
-            return View(new EditFavoriteModel
-            {
-                LoyaltyNumber = customer.LoyaltyNumber,
-                Favorite = customer.FavoriteDrink
-            });
+            return View(ProfileModel.FromCustomer(customer));
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditFavorite(EditFavoriteModel model)
+        public async Task<IActionResult> EditProfile(ProfileModel model)
         {
-            await repo.SetFavorite(model);
+            await repo.SetProfile(model);
             return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
         }
     }
