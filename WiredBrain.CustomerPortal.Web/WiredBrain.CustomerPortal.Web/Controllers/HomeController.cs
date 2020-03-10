@@ -41,19 +41,11 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
         public async Task<IActionResult> LoyaltyOverview(int loyaltyNumber)
         {
             ViewBag.Title = "Your points";
-            var cookieName = "LoyaltyInfo";
 
-            if (Request.Cookies.ContainsKey(cookieName))
-            {
-                var loyaltyInfo = JsonSerializer.Deserialize<LoyaltyModel>(Request.Cookies[cookieName]);
-                return View(loyaltyInfo);
-            }
             var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
             var pointsNeeded = int.Parse(config["CustomerPortalSettings:PointsNeeded"]);
 
             var loyaltyModel = LoyaltyModel.FromCustomer(customer, pointsNeeded);
-            Response.Cookies.Append("LoyaltyInfo", JsonSerializer.Serialize(loyaltyModel),
-                new CookieOptions { Expires = DateTimeOffset.Now.AddHours(2) });
             return View(loyaltyModel);
         }
 
@@ -68,8 +60,12 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(ProfileModel model)
         {
-            await repo.SetProfile(model);
-            return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
+            if (ModelState.IsValid)
+            {
+                await repo.SetProfile(model);
+                return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
+            }
+            return View(model);
         }
     }
 }
