@@ -1,8 +1,7 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using WiredBrain.CustomerPortal.Web.Models;
 using WiredBrain.CustomerPortal.Web.Repositories;
@@ -49,9 +48,9 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
             return View(loyaltyModel);
         }
 
-        public async Task<IActionResult> EditProfile(int loyaltyNumber)
+        public async Task<IActionResult> EditProfile([BindRequired] int loyaltyNumber)
         {
-            ViewBag.Title = "Edit favorite";
+            ViewBag.Title = "Edit profile";
 
             var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
             return View(ProfileModel.FromCustomer(customer));
@@ -60,12 +59,8 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(ProfileModel model)
         {
-            if (ModelState.IsValid)
-            {
-                await repo.SetProfile(model);
-                return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
-            }
-            return View(model);
+            await repo.SetProfile(model);
+            return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
         }
     }
 }
