@@ -6,7 +6,6 @@
 <div class="row">
     <form asp-action="EditProfile" style="width:100%">
         @Html.HiddenFor(m => m.LoyaltyNumber)
-
         <div class="row">
             <div class="col">
                 <div class="form-group">
@@ -24,6 +23,7 @@
                 <div class="form-group">
                     <label for="city" asp-for="City"></label>
                     <input type="text" class="form-control" asp-for="City" id="city" />
+                    <span asp-validation-for="City"></span>
                 </div>
                 <div class="form-group">
                     <label for="birth" asp-for="BirthDate"></label>
@@ -46,6 +46,7 @@
                 <div class="form-group">
                     <label for="sugar" asp-for="SugarLumps"></label>
                     <input type="text" class="form-control" asp-for="SugarLumps" id="sugar" />
+                    <span asp-validation-for="SugarLumps"></span>
                 </div>
                 <div class="form-group">
                     <label for="fav" asp-for="Favorite"></label>

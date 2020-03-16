@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using WiredBrain.CustomerPortal.Web.Data;
 
 namespace WiredBrain.CustomerPortal.Web.Models
@@ -12,7 +13,9 @@ namespace WiredBrain.CustomerPortal.Web.Models
 
         public string Name { get; set; }
         public string Address { get; set; }
+        [Remote(action: "CheckZip", controller: "Home", AdditionalFields = nameof(Address))]
         public string Zip { get; set; }
+        [UpperCase(3)]
         public string City { get; set; }
 
         [Display(Name = "Email address")]
@@ -27,6 +30,7 @@ namespace WiredBrain.CustomerPortal.Web.Models
         public bool AddLiquor { get; set; }
 
         [Display(Name = "Number of sugar lumps")]
+        [MyRange]
         public int SugarLumps { get; set; }
 
         public static ProfileModel FromCustomer(Customer customer)

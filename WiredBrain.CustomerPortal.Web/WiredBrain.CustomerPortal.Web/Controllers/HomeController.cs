@@ -59,8 +59,20 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(ProfileModel model)
         {
+            ModelState.AddModelError("", "Error");
             await repo.SetProfile(model);
             return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
+        }
+
+        public ActionResult CheckZip(string zip, string address)
+        {
+            //check database
+            var dbResult = false;
+
+            if (dbResult == false)
+                return Json("Non-existant ZIP code");
+
+            return Json(true);
         }
     }
 }
