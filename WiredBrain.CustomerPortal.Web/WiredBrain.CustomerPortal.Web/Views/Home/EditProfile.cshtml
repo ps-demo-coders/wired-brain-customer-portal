@@ -5,51 +5,65 @@
 </div>
 <div class="row">
     <form asp-action="EditProfile" style="width:100%">
+        <div asp-validation-summary="All"></div>
+
         @Html.HiddenFor(m => m.LoyaltyNumber)
 
         <div class="row">
             <div class="col">
                 <div class="form-group">
                     <label for="name" asp-for="Name"></label>
-                    <input type="text" class="form-control" asp-for="Name" id="name" />
+                    <input type="text" class="form-control"
+                           asp-for="Name" id="name" />
+                    <span asp-validation-for="Name"></span>
                 </div>
                 <div class="form-group">
                     <label for="address" asp-for="Address"></label>
                     <input type="text" class="form-control" asp-for="Address" id="address" />
+                    <span asp-validation-for="Address"></span>
                 </div>
                 <div class="form-group">
                     <label for="zip" asp-for="Zip"></label>
                     <input type="text" class="form-control" asp-for="Zip" id="zip" />
+                    <span asp-validation-for="Zip"></span>
                 </div>
                 <div class="form-group">
                     <label for="city" asp-for="City"></label>
                     <input type="text" class="form-control" asp-for="City" id="city" />
+                    <span asp-validation-for="City"></span>
                 </div>
                 <div class="form-group">
                     <label for="birth" asp-for="BirthDate"></label>
                     <input type="date" class="form-control" asp-for="BirthDate" id="birth" />
+                    <span asp-validation-for="BirthDate"></span>
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
                     <label for="email" asp-for="EmailAddress"></label>
                     <input type="text" class="form-control" asp-for="EmailAddress" id="email" />
+                    <span asp-validation-for="EmailAddress"></span>
+
                 </div>
                 <div class="form-group">
                     <label for="emailRep" asp-for="EmailAddressRepeated"></label>
                     <input type="text" class="form-control" asp-for="EmailAddressRepeated" id="emailRep" />
+                    <span asp-validation-for="EmailAddressRepeated"></span>
                 </div>
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" asp-for="AddLiquor" id="liq" />
                     <label for="liq" asp-for="AddLiquor"></label>
+                    <span asp-validation-for="AddLiquor"></span>
                 </div>
                 <div class="form-group">
                     <label for="sugar" asp-for="SugarLumps"></label>
                     <input type="text" class="form-control" asp-for="SugarLumps" id="sugar" />
+                    <span asp-validation-for="SugarLumps"></span>
                 </div>
                 <div class="form-group">
                     <label for="fav" asp-for="Favorite"></label>
                     <input type="text" class="form-control" asp-for="Favorite" id="fav" />
+                    <span asp-validation-for="Favorite"></span>
                 </div>
             </div>
         </div>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -48,19 +49,30 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
             return View(loyaltyModel);
         }
 
-        public async Task<IActionResult> EditProfile([BindRequired] int loyaltyNumber)
+        public async Task<IActionResult> EditProfile(
+            [Range(0, 10000), BindRequired, FromQuery] int loyaltyNumber)
         {
             ViewBag.Title = "Edit profile";
 
-            var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
-            return View(ProfileModel.FromCustomer(customer));
+            if (ModelState.IsValid)
+            {
+                var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
+                return View(ProfileModel.FromCustomer(customer));
+            }
+            throw new ArgumentException("Invalid loyalty number");
         }
 
         [HttpPost]
         public async Task<IActionResult> EditProfile(ProfileModel model)
         {
-            await repo.SetProfile(model);
-            return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
+            if (ModelState.IsValid)
+            {
+                await repo.SetProfile(model);
+                return RedirectToAction("LoyaltyOverview",
+                    new { loyaltyNumber = model.LoyaltyNumber });
+            }
+            return View(model);
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using WiredBrain.CustomerPortal.Web.Data;
+using WiredBrain.CustomerPortal.Web.Resources;
 
 namespace WiredBrain.CustomerPortal.Web.Models
 {
@@ -10,15 +11,22 @@ namespace WiredBrain.CustomerPortal.Web.Models
         [Display(Name = "Favorite drink")]
         public string Favorite { get; set; }
 
+        [Required]
         public string Name { get; set; }
         public string Address { get; set; }
+        [RegularExpression(@"^\d{5}$",
+            ErrorMessageResourceType = typeof(ValidationMessages),
+            ErrorMessageResourceName = "Zip")]
         public string Zip { get; set; }
         public string City { get; set; }
 
         [Display(Name = "Email address")]
+        [EmailAddress]
+        [Required]
         public string EmailAddress { get; set; }
 
         [Display(Name = "Email address repeated")]
+        [Compare("EmailAddress")]
         public string EmailAddressRepeated { get; set; }
 
         public DateTime BirthDate { get; set; }
@@ -27,6 +35,7 @@ namespace WiredBrain.CustomerPortal.Web.Models
         public bool AddLiquor { get; set; }
 
         [Display(Name = "Number of sugar lumps")]
+        [Range(0, 10)]
         public int SugarLumps { get; set; }
 
         public static ProfileModel FromCustomer(Customer customer)
