@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using WiredBrain.CustomerPortal.Web.Data;
 using WiredBrain.CustomerPortal.Web.Resources;
+using WiredBrain.CustomerPortal.Web.Validations;
 
 namespace WiredBrain.CustomerPortal.Web.Models
 {
@@ -14,10 +15,9 @@ namespace WiredBrain.CustomerPortal.Web.Models
         [Required]
         public string Name { get; set; }
         public string Address { get; set; }
-        [RegularExpression(@"^\d{5}$",
-            ErrorMessageResourceType = typeof(ValidationMessages),
-            ErrorMessageResourceName = "Zip")]
+        [Zip]
         public string Zip { get; set; }
+        [UpperCase]
         public string City { get; set; }
 
         [Display(Name = "Email address")]
