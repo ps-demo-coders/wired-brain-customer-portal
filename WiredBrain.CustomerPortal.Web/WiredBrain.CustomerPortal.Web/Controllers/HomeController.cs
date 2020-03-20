@@ -65,6 +65,8 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(ProfileModel model)
         {
+           // if (model.AddLiquor && (DateTime.Now.Year - model.BirthDate.Year < 21))
+           //     ModelState.AddModelError("", "Must be 21 to purchase liquor");
             if (ModelState.IsValid)
             {
                 await repo.SetProfile(model);
@@ -73,6 +75,16 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
             }
             return View(model);
 
+        }
+        public IActionResult CheckZip(string zip, string address)
+        {
+            //check database
+            var dbResult = false;
+
+            if (dbResult == false)
+                return Json("Non-existent ZIP code");
+
+            return Json(true);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace WiredBrain.CustomerPortal.Web.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} must be a valid US zip.
+        ///   Looks up a localized string similar to Must be a valid US zip.
         /// </summary>
         internal static string Zip {
             get {

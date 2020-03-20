@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using WiredBrain.CustomerPortal.Web.Data;
-using WiredBrain.CustomerPortal.Web.Resources;
 using WiredBrain.CustomerPortal.Web.Validations;
 
 namespace WiredBrain.CustomerPortal.Web.Models
 {
-    public class ProfileModel
+    public class ProfileModel : IValidatableObject
     {
         public int LoyaltyNumber { get; set; }
         [Display(Name = "Favorite drink")]
@@ -16,8 +17,11 @@ namespace WiredBrain.CustomerPortal.Web.Models
         public string Name { get; set; }
         public string Address { get; set; }
         [Zip]
+        [Remote(action: "CheckZip", controller: "Home",
+            AdditionalFields = nameof(Address))]
         public string Zip { get; set; }
-        [UpperCase]
+        [Required]
+        [UpperCase(3)]
         public string City { get; set; }
 
         [Display(Name = "Email address")]
@@ -32,6 +36,7 @@ namespace WiredBrain.CustomerPortal.Web.Models
         public DateTime BirthDate { get; set; }
 
         [Display(Name = "Add liquor to your coffee?")]
+        // [Age21Required]
         public bool AddLiquor { get; set; }
 
         [Display(Name = "Number of sugar lumps")]
@@ -52,6 +57,15 @@ namespace WiredBrain.CustomerPortal.Web.Models
                 BirthDate = customer.BirthDate,
                 AddLiquor = customer.AddLiquor
             };
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (AddLiquor && (DateTime.Now.Year - BirthDate.Year < 21))
+                yield return new ValidationResult("Must be 21 to purchase liquor")
+                {
+
+                };
         }
     }
 }

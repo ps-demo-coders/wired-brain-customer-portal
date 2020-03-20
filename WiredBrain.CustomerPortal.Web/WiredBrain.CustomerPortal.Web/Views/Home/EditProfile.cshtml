@@ -5,7 +5,7 @@
 </div>
 <div class="row">
     <form asp-action="EditProfile" style="width:100%">
-        <div asp-validation-summary="All"></div>
+        <div asp-validation-summary="ModelOnly"></div>
 
         @Html.HiddenFor(m => m.LoyaltyNumber)
 

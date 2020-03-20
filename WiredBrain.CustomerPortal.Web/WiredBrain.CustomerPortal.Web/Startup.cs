@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WiredBrain.CustomerPortal.Web.Data;
 using WiredBrain.CustomerPortal.Web.Repositories;
+using WiredBrain.CustomerPortal.Web.Validations;
 
 namespace WiredBrain.CustomerPortal.Web
 {
@@ -33,6 +35,8 @@ namespace WiredBrain.CustomerPortal.Web
             services.AddSingleton(context);
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddSingleton(config);
+            services.AddSingleton<IValidationAttributeAdapterProvider,
+                CustomAdapterProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
