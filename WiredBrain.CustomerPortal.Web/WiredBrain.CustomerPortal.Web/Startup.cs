@@ -30,6 +30,7 @@ namespace WiredBrain.CustomerPortal.Web
             context.Database.EnsureCreated();
             context.Seed();
 
+            services.AddCors(o => o.AddDefaultPolicy(b => b.AllowAnyOrigin()));
             services.AddSingleton(context);
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddSingleton(config);
@@ -41,6 +42,7 @@ namespace WiredBrain.CustomerPortal.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

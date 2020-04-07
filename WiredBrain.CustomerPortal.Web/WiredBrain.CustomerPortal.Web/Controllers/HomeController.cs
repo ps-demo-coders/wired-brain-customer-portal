@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +12,7 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
     {
         private readonly ICustomerRepository repo;
         private readonly IConfiguration config;
+        private const string cookieName = "LoyaltyNumber";
 
         public HomeController(ICustomerRepository repo, IConfiguration config)
         {
@@ -22,6 +22,9 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
 
         public IActionResult Index()
         {
+            if (Request.Cookies[cookieName] != null)
+                return RedirectToAction("LoyaltyOverview");
+
             ViewBag.Title = "Enter loyalty number";
             return View();
         }
@@ -32,36 +35,35 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
             var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
             if (customer == null)
             {
-                ModelState.AddModelError(string.Empty, "Unknown loyalty number");
+                ModelState.AddModelError(string.Empty,
+                    "Unknown loyalty number");
                 return View();
             }
-            return RedirectToAction("LoyaltyOverview", new { loyaltyNumber });
+            Response.Cookies.Append(cookieName, $"{loyaltyNumber}",
+                new CookieOptions { SameSite = SameSiteMode.Lax });
+            return RedirectToAction("LoyaltyOverview");
         }
 
-        public async Task<IActionResult> LoyaltyOverview(int loyaltyNumber)
+        public async Task<IActionResult> LoyaltyOverview()
         {
             ViewBag.Title = "Your points";
-            var cookieName = "LoyaltyInfo";
 
-            if (Request.Cookies.ContainsKey(cookieName))
-            {
-                var loyaltyInfo = JsonSerializer.Deserialize<LoyaltyModel>(Request.Cookies[cookieName]);
-                return View(loyaltyInfo);
-            }
-            var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
+            var customer = await repo.GetCustomerByLoyaltyNumber(
+                GetLoyaltyNumberFromCookie());
             var pointsNeeded = int.Parse(config["CustomerPortalSettings:PointsNeeded"]);
 
-            var loyaltyModel = LoyaltyModel.FromCustomer(customer, pointsNeeded);
-            Response.Cookies.Append("LoyaltyInfo", JsonSerializer.Serialize(loyaltyModel), 
-                new CookieOptions { Expires = DateTimeOffset.Now.AddHours(2) });
+            var loyaltyModel = LoyaltyModel.FromCustomer(customer,
+                pointsNeeded);
+
             return View(loyaltyModel);
         }
 
-        public async Task<IActionResult> EditFavorite(int loyaltyNumber)
+        public async Task<IActionResult> EditFavorite()
         {
             ViewBag.Title = "Edit favorite";
 
-            var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
+            var customer = await repo.GetCustomerByLoyaltyNumber(
+                GetLoyaltyNumberFromCookie());
             return View(new EditFavoriteModel
             {
                 LoyaltyNumber = customer.LoyaltyNumber,
@@ -70,10 +72,27 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditFavorite(EditFavoriteModel model)
         {
-            await repo.SetFavorite(model);
-            return RedirectToAction("LoyaltyOverview", new { loyaltyNumber = model.LoyaltyNumber });
+            await repo.SetFavorite(GetLoyaltyNumberFromCookie(),
+                model.Favorite);
+            return RedirectToAction("LoyaltyOverview");
+        }
+
+        public async Task<IActionResult> SetFavorite(string favorite)
+        {
+            await repo.SetFavorite(GetLoyaltyNumberFromCookie(), favorite);
+            return RedirectToAction("LoyaltyOverview");
+        }
+
+        private int GetLoyaltyNumberFromCookie()
+        {
+            var cookie = Request.Cookies[cookieName];
+            if (cookie == null)
+                throw new ArgumentException("No cookie found");
+
+            return int.Parse(Request.Cookies[cookieName]);
         }
     }
 }
