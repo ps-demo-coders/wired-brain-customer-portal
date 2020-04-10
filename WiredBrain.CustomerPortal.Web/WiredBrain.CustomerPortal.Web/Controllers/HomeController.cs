@@ -9,6 +9,7 @@ using WiredBrain.CustomerPortal.Web.Repositories;
 
 namespace WiredBrain.CustomerPortal.Web.Controllers
 {
+    //[SecurityHeaders]
     public class HomeController : Controller
     {
         private readonly ICustomerRepository repo;
@@ -41,19 +42,11 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
         public async Task<IActionResult> LoyaltyOverview(int loyaltyNumber)
         {
             ViewBag.Title = "Your points";
-            var cookieName = "LoyaltyInfo";
 
-            if (Request.Cookies.ContainsKey(cookieName))
-            {
-                var loyaltyInfo = JsonSerializer.Deserialize<LoyaltyModel>(Request.Cookies[cookieName]);
-                return View(loyaltyInfo);
-            }
             var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
             var pointsNeeded = int.Parse(config["CustomerPortalSettings:PointsNeeded"]);
 
             var loyaltyModel = LoyaltyModel.FromCustomer(customer, pointsNeeded);
-            Response.Cookies.Append("LoyaltyInfo", JsonSerializer.Serialize(loyaltyModel), 
-                new CookieOptions { Expires = DateTimeOffset.Now.AddHours(2) });
             return View(loyaltyModel);
         }
 
@@ -62,11 +55,12 @@ namespace WiredBrain.CustomerPortal.Web.Controllers
             ViewBag.Title = "Edit favorite";
 
             var customer = await repo.GetCustomerByLoyaltyNumber(loyaltyNumber);
+
             return View(new EditFavoriteModel
             {
-                LoyaltyNumber = customer.LoyaltyNumber,
-                Favorite = customer.FavoriteDrink
-            });
+                LoyaltyNumber = customer?.LoyaltyNumber,
+                Favorite = customer?.FavoriteDrink
+        });
         }
 
         [HttpPost]
